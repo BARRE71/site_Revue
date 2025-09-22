@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Désinscription Newsletter - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-envelope-open-text me-2"></i>
+                        Désinscription Newsletter
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        Nous sommes désolés de vous voir partir. Vous pouvez vous désinscrire de notre newsletter en saisissant votre adresse email ci-dessous.
+                    </p>
+                    
+                    <form method="POST" action="{% url 'core:newsletter_unsubscribe' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Adresse email</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="votre@email.com" required>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-user-times me-2"></i>
+                                Se désinscrire
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <p class="text-muted mb-2">
+                            <small>Vous souhaitez vous réinscrire ?</small>
+                        </p>
+                        <a href="{% url 'core:newsletter_subscribe' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-envelope me-1"></i>
+                            S'inscrire à nouveau
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Annuler l'abonnement - RevueMaroc{% endblock %}
+
+{% block extra_css %}
+<style>
+.cancel-container {
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.cancel-header {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.cancel-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.cancel-header-card {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.warning-section {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.warning-section h5 {
+    color: #856404;
+    margin-bottom: 1rem;
+}
+
+.warning-section ul {
+    color: #856404;
+    margin-bottom: 0;
+}
+
+.subscription-details {
+    padding: 2rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.detail-value {
+    color: #6c757d;
+}
+
+.btn-action {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0.25rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+    color: white;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+    color: white;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Navigation fil d'Ariane -->
+<nav class="breadcrumb-nav" style="background: #f8f9fa; padding: 1rem 0; margin-bottom: 0;">
+    <div class="container">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'core:home' %}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>Accueil
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'subscriptions:my_subscription' %}" class="text-decoration-none">
+                    Mon abonnement
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Annuler l'abonnement
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête -->
+<section class="cancel-header">
+    <div class="container text-center">
+        <h1><i class="fas fa-exclamation-triangle me-3"></i>Annuler l'abonnement</h1>
+        <p class="lead">Confirmez l'annulation de votre abonnement RevueMaroc</p>
+    </div>
+</section>
+
+<!-- Contenu principal -->
+<section class="cancel-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="cancel-card">
+                    <div class="cancel-header-card">
+                        <h2><i class="fas fa-times-circle me-2"></i>Annulation d'abonnement</h2>
+                        <p class="mb-0">Vous êtes sur le point d'annuler votre abonnement</p>
+                    </div>
+                    
+                    <div class="subscription-details">
+                        <!-- Avertissement -->
+                        <div class="warning-section">
+                            <h5><i class="fas fa-exclamation-triangle me-2"></i>Attention !</h5>
+                            <p>L'annulation de votre abonnement entraînera :</p>
+                            <ul>
+                                <li>La perte d'accès à tout le contenu premium</li>
+                                <li>L'arrêt du renouvellement automatique</li>
+                                <li>La conservation de l'accès jusqu'à la date d'expiration</li>
+                                <li>La possibilité de vous réabonner à tout moment</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Détails de l'abonnement -->
+                        <h5 class="mb-3">Détails de l'abonnement à annuler :</h5>
+                        
+                        <div class="detail-item">
+                            <span class="detail-label">Plan</span>
+                            <span class="detail-value">{{ subscription.plan.name }}</span>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <span class="detail-label">Prix</span>
+                            <span class="detail-value">{{ subscription.plan.price }}€</span>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <span class="detail-label">Date d'expiration</span>
+                            <span class="detail-value">{{ subscription.end_date|date:"d/m/Y" }}</span>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <span class="detail-label">Accès jusqu'au</span>
+                            <span class="detail-value">{{ subscription.end_date|date:"d/m/Y" }}</span>
+                        </div>
+                        
+                        <!-- Formulaire de confirmation -->
+                        <form method="post" class="mt-4">
+                            {% csrf_token %}
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="confirm_cancel" required>
+                                <label class="form-check-label" for="confirm_cancel">
+                                    <strong>Je confirme vouloir annuler mon abonnement</strong><br>
+                                    <small class="text-muted">
+                                        Je comprends que je perdrai l'accès au contenu premium à la date d'expiration
+                                    </small>
+                                </label>
+                            </div>
+                            
+                            <div class="text-center">
+                                <button type="submit" class="btn-action btn-danger" id="cancelBtn" disabled>
+                                    <i class="fas fa-times me-2"></i>
+                                    Confirmer l'annulation
+                                </button>
+                                <a href="{% url 'subscriptions:my_subscription' %}" class="btn-action btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Retour
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Alternative -->
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        Vous hésitez ? 
+                        <a href="{% url 'subscriptions:plan_list' %}" class="text-primary">
+                            Découvrez nos autres plans
+                        </a>
+                        ou 
+                        <a href="{% url 'core:contact' %}" class="text-primary">
+                            contactez notre support
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmCheckbox = document.getElementById('confirm_cancel');
+    const cancelBtn = document.getElementById('cancelBtn');
+    
+    function validateForm() {
+        if (confirmCheckbox.checked) {
+            cancelBtn.disabled = false;
+            cancelBtn.style.opacity = '1';
+        } else {
+            cancelBtn.disabled = true;
+            cancelBtn.style.opacity = '0.6';
+        }
+    }
+    
+    confirmCheckbox.addEventListener('change', validateForm);
+    validateForm(); // Validation initiale
+    
+    // Confirmation avant soumission
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        if (!confirm('Êtes-vous absolument sûr de vouloir annuler votre abonnement ? Cette action est irréversible.')) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}

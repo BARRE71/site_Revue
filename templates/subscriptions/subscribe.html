@@ -1,0 +1,341 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Souscrire - {{ plan.name }} - RevueMaroc{% endblock %}
+
+{% block extra_css %}
+<style>
+.subscription-container {
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.subscription-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.plan-summary-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.plan-header {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.plan-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.plan-price {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.plan-currency {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.plan-duration {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+.plan-content {
+    padding: 2rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.feature-item i {
+    color: #28a745;
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+
+.subscription-form {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+}
+
+.btn-subscribe {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-subscribe:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    color: white;
+}
+
+.btn-cancel {
+    background: #6c757d;
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-cancel:hover {
+    background: #5a6268;
+    color: white;
+    text-decoration: none;
+}
+
+.payment-info {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.payment-info h6 {
+    color: #1976d2;
+    margin-bottom: 0.5rem;
+}
+
+.payment-info p {
+    color: #424242;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Navigation fil d'Ariane -->
+<nav class="breadcrumb-nav" style="background: #f8f9fa; padding: 1rem 0; margin-bottom: 0;">
+    <div class="container">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'core:home' %}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>Accueil
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'subscriptions:plan_list' %}" class="text-decoration-none">
+                    Plans d'abonnement
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Souscrire - {{ plan.name }}
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête -->
+<section class="subscription-header">
+    <div class="container text-center">
+        <h1><i class="fas fa-rocket me-3"></i>Souscrire à {{ plan.name }}</h1>
+        <p class="lead">Finalisez votre abonnement et accédez à tout le contenu de RevueMaroc</p>
+    </div>
+</section>
+
+<!-- Contenu principal -->
+<section class="subscription-container">
+    <div class="container">
+        <div class="row">
+            <!-- Résumé du plan -->
+            <div class="col-lg-4">
+                <div class="plan-summary-card">
+                    <div class="plan-header">
+                        <div class="plan-name">{{ plan.name }}</div>
+                        <div class="plan-price">{{ plan.price }}</div>
+                        <div class="plan-currency">€</div>
+                        <div class="plan-duration">/ {{ plan.duration_days }} jours</div>
+                    </div>
+                    
+                    <div class="plan-content">
+                        <h5 class="mb-3">Fonctionnalités incluses :</h5>
+                        {% for feature in plan.features %}
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>{{ feature }}</span>
+                        </div>
+                        {% empty %}
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Accès à tous les numéros</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Contenu exclusif</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check"></i>
+                            <span>Support prioritaire</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Formulaire de souscription -->
+            <div class="col-lg-8">
+                <div class="subscription-form">
+                    <h3 class="mb-4">
+                        <i class="fas fa-credit-card me-2"></i>Finaliser l'abonnement
+                    </h3>
+                    
+                    <!-- Informations de paiement -->
+                    <div class="payment-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>Mode de paiement</h6>
+                        <p>
+                            <strong>Prix total : {{ plan.price }}€</strong><br>
+                            Le paiement sera traité via Stripe (simulation en mode développement). 
+                            En production, vous serez redirigé vers la plateforme de paiement sécurisée.
+                        </p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-user me-2"></i>Nom complet
+                            </label>
+                            <input type="text" class="form-control" value="{{ user.get_full_name|default:user.username }}" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email
+                            </label>
+                            <input type="email" class="form-control" value="{{ user.email }}" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="auto_renew" name="auto_renew" checked>
+                                <label class="form-check-label" for="auto_renew">
+                                    <strong>Renouvellement automatique</strong><br>
+                                    <small class="text-muted">
+                                        Votre abonnement sera automatiquement renouvelé à la fin de la période. 
+                                        Vous pouvez annuler à tout moment.
+                                    </small>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    J'accepte les <a href="#" class="text-primary">conditions générales</a> et la 
+                                    <a href="#" class="text-primary">politique de confidentialité</a>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-subscribe">
+                                    <i class="fas fa-credit-card me-2"></i>
+                                    Confirmer l'abonnement
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{% url 'subscriptions:plan_list' %}" class="btn-cancel">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Retour aux plans
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validation du formulaire
+    const form = document.querySelector('form');
+    const termsCheckbox = document.getElementById('terms');
+    const submitBtn = document.querySelector('.btn-subscribe');
+    
+    function validateForm() {
+        if (termsCheckbox.checked) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.6';
+        }
+    }
+    
+    termsCheckbox.addEventListener('change', validateForm);
+    validateForm(); // Validation initiale
+    
+    // Confirmation avant soumission
+    form.addEventListener('submit', function(e) {
+        if (!confirm('Êtes-vous sûr de vouloir souscrire à ce plan ?')) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}

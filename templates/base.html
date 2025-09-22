@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site_name|default:"RevueMaroc" }}{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        main {
+            flex: 1;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        .brand-logo {
+            height: 52px; /* plus grand que les éléments du menu */
+            width: auto;
+            display: inline-block;
+            object-fit: contain;
+            background: transparent;
+            mix-blend-mode: normal; /* pas de mélange pour garder les couleurs nettes */
+            filter: none;
+        }
+        @media (max-width: 576px) {
+            .brand-logo { height: 42px; }
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: white;
+            padding: 4rem 0;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: auto;
+            border-top: 3px solid var(--primary-color);
+        }
+        
+        .footer a {
+            color: #e9ecef;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+        
+        .footer h5, .footer h6 {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .search-bar {
+            background: white;
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .search-input {
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+        
+        .category-card {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--success-color));
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .featured-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--warning-color);
+            color: var(--dark-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation principale -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'core:home' %}">
+                {% if site_settings.logo %}
+                    <img src="{{ site_settings.logo.url }}" alt="{{ site_name|default:'RevueMaroc' }}" class="brand-logo">
+                    <span class="visually-hidden">{{ site_name|default:"RevueMaroc" }}</span>
+                {% else %}
+                    <i class="fas fa-book-open me-2"></i>
+                    {{ site_name|default:"RevueMaroc" }}
+                {% endif %}
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:home' %}">
+                            <i class="fas fa-home me-1"></i>Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'articles:article_list' %}">
+                            <i class="fas fa-newspaper me-1"></i>Articles
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'livres:revue_list' %}">
+                            <i class="fas fa-book me-1"></i>Livres
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'subscriptions:plan_list' %}">
+                            <i class="fas fa-crown me-1"></i>Abonnements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:about' %}">
+                            <i class="fas fa-info-circle me-1"></i>À propos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:contact' %}">
+                            <i class="fas fa-envelope me-1"></i>Contact
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Barre de recherche -->
+                <form class="d-flex me-3" method="GET" action="{% url 'core:search' %}">
+                    <div class="search-bar d-flex align-items-center">
+                        <input class="search-input" type="search" name="q" placeholder="Rechercher articles, livres..." 
+                               value="{{ request.GET.q }}" aria-label="Search">
+                        <button class="btn btn-link text-dark" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Menu utilisateur -->
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user me-1"></i>{{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'core:dashboard' %}">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Tableau de bord
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'users:profile' %}">
+                                    <i class="fas fa-user-edit me-2"></i>Profil
+                                </a></li>
+                                                                 <li><a class="dropdown-item" href="{% url 'articles:article_list' %}">
+                                     <i class="fas fa-newspaper me-2"></i>Voir les articles
+                                 </a></li>
+                                 <li><a class="dropdown-item" href="{% url 'livres:revue_list' %}">
+                                     <i class="fas fa-shopping-bag me-2"></i>Catalogue des revues
+                                 </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                                                                                 <li>
+                                    <a class="dropdown-item" href="{% url 'users:logout' %}">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                                                 <li class="nav-item">
+                             <a class="nav-link" href="{% url 'livres:cart_detail' %}">
+                                 <i class="fas fa-shopping-cart me-1"></i>
+                                 <span class="badge bg-primary cart-count">0</span>
+                             </a>
+                         </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users:login' %}">
+                                <i class="fas fa-sign-in-alt me-1"></i>Connexion
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users:register' %}">
+                                <i class="fas fa-user-plus me-1"></i>Inscription
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages flash -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Contenu principal -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5><i class="fas fa-book-open me-2"></i>{{ site_name|default:"RevueMaroc" }}</h5>
+                    <p class="text-light">
+                        {{ site_description|default:"Votre source d'information sur le développement du Maroc" }}
+                    </p>
+                    <div class="social-links">
+                        {% if site_settings.facebook_url %}
+                            <a href="{{ site_settings.facebook_url }}" class="text-white me-3" target="_blank">
+                                <i class="fab fa-facebook fa-lg"></i>
+                            </a>
+                        {% endif %}
+                        {% if site_settings.twitter_url %}
+                            <a href="{{ site_settings.twitter_url }}" class="text-white me-3" target="_blank">
+                                <i class="fab fa-twitter fa-lg"></i>
+                            </a>
+                        {% endif %}
+                        {% if site_settings.linkedin_url %}
+                            <a href="{{ site_settings.linkedin_url }}" class="text-white me-3" target="_blank">
+                                <i class="fab fa-linkedin fa-lg"></i>
+                            </a>
+                        {% endif %}
+                        {% if site_settings.instagram_url %}
+                            <a href="{{ site_settings.instagram_url }}" class="text-white me-3" target="_blank">
+                                <i class="fab fa-instagram fa-lg"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-2 mb-4">
+                    <h6>Contenu</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'articles:article_list' %}" class="text-light">Articles</a></li>
+                        <li><a href="{% url 'livres:revue_list' %}" class="text-light">Livres</a></li>
+                        <li><a href="{% url 'core:search' %}" class="text-light">Recherche</a></li>
+                        <li><a href="{% url 'core:sitemap' %}" class="text-light">Plan du site</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-2 mb-4">
+                    <h6>Services</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'subscriptions:plan_list' %}" class="text-light">Abonnements</a></li>
+                        <li><a href="{% url 'core:newsletter_subscribe' %}" class="text-light">Newsletter</a></li>
+                        <li><a href="{% url 'core:contact' %}" class="text-light">Contact</a></li>
+                        <li><a href="{% url 'core:about' %}" class="text-light">À propos</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <h6>Newsletter</h6>
+                    <p class="text-light">Restez informé des dernières actualités</p>
+                    <form method="POST" action="{% url 'core:newsletter_subscribe' %}" class="d-flex">
+                        {% csrf_token %}
+                        <input type="email" name="email" class="form-control me-2" placeholder="Votre email" required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                    <small class="text-light">
+                        <a href="{% url 'core:newsletter_unsubscribe' %}" class="text-light">
+                            <i class="fas fa-user-times me-1"></i>Se désinscrire
+                        </a>
+                    </small>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-light">
+                        &copy; {% now "Y" %} "مسالك الفكر و السياسة و الإقتصاد
+                        د. رضوان زهرو". جميع الحقوق محفوظة.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0 text-light">
+                        {% if site_settings.contact_email %}
+                            <i class="fas fa-envelope me-2"></i>{{ site_settings.contact_email }}
+                        {% endif %}
+                        {% if site_settings.contact_phone %}
+                            <i class="fas fa-phone me-2 ms-3"></i>{{ site_settings.contact_phone }}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Mise à jour du compteur du panier
+        function updateCartCount() {
+            fetch('/livres/cart/count/')
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector('.cart-count').textContent = data.count;
+                })
+                .catch(error => console.error('Erreur:', error));
+        }
+        
+        // Mettre à jour le compteur au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+        });
+        
+        // Auto-dismiss des alertes
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

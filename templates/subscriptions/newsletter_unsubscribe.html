@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Désabonnement Newsletter - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-envelope-open-text me-2"></i>
+                        Désabonnement Newsletter
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">
+                        Vous êtes sur le point de vous désabonner de la newsletter RevueMaroc.
+                    </p>
+                    
+                    <div class="alert alert-info">
+                        <strong>Email :</strong> {{ newsletter_subscription.email }}<br>
+                        <strong>Date d'inscription :</strong> {{ newsletter_subscription.subscribed_at|date:"d/m/Y" }}
+                    </div>
+                    
+                    <p class="text-muted">
+                        En vous désabonnant, vous ne recevrez plus nos newsletters avec les dernières publications et actualités.
+                    </p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-times me-2"></i>
+                                Confirmer la désinscription
+                            </button>
+                            <a href="{% url 'core:home' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Retour à l'accueil
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

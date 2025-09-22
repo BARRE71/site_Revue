@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mon panier - {{ site_name|default:"RevueMaroc" }}{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-shopping-cart me-2"></i>
+                Mon panier
+            </h1>
+        </div>
+    </div>
+
+    {% if cart_items %}
+    <div class="row">
+        <!-- Liste des articles du panier -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Articles dans le panier ({{ cart_items|length }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for item in cart_items %}
+                    <div class="row align-items-center py-3 border-bottom">
+                        <div class="col-md-2">
+                            {% if item.revue.cover_image %}
+                                <img src="{{ item.revue.cover_image.url }}" class="img-fluid rounded" alt="{{ item.revue.title }}">
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 80px;">
+                                    <i class="fas fa-book fa-2x text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="mb-1">{{ item.revue.title }}</h6>
+                            <p class="text-muted mb-1 small">{{ item.revue.subtitle }}</p>
+                            <span class="badge bg-primary">N°{{ item.revue.numero }}</span>
+                            <span class="badge bg-secondary ms-1">{{ item.get_format_display }}</span>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group input-group-sm">
+                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity({{ item.id }}, -1)">-</button>
+                                <input type="number" class="form-control text-center" value="{{ item.quantity }}" min="1" max="99" 
+                                       onchange="updateQuantity({{ item.id }}, this.value - {{ item.quantity }})">
+                                <button class="btn btn-outline-secondary" type="button" onclick="updateQuantity({{ item.id }}, 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <span class="fw-bold">{{ item.unit_price }} MAD</span>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <span class="fw-bold text-primary">{{ item.total_price }} MAD</span>
+                        </div>
+                        <div class="col-md-12 mt-2">
+                            <button class="btn btn-outline-danger btn-sm" onclick="removeItem({{ item.id }})">
+                                <i class="fas fa-trash me-1"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Résumé et commande -->
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top: 100px;">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calculator me-2"></i>
+                        Résumé de la commande
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Sous-total</span>
+                        <span>{{ cart_total }} MAD</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Frais de livraison</span>
+                        <span>{{ shipping_cost|default:"0" }} MAD</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Total</strong>
+                        <strong class="text-primary">{{ total_with_shipping|default:cart_total }} MAD</strong>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'livres:checkout' %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-credit-card me-2"></i>
+                            Procéder à la commande
+                        </a>
+                        <a href="{% url 'livres:revue_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-plus me-2"></i>
+                            Continuer les achats
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Panier vide -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card text-center py-5">
+                <div class="card-body">
+                    <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
+                    <h3 class="text-muted">Votre panier est vide</h3>
+                    <p class="text-muted mb-4">Découvrez notre collection de revues et commencez vos achats</p>
+                    <a href="{% url 'livres:revue_list' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-book me-2"></i>
+                        Parcourir les revues
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Scripts pour la gestion du panier -->
+<script>
+function updateQuantity(itemId, change) {
+    const newQuantity = Math.max(1, parseInt(document.querySelector(`input[onchange*="${itemId}"]`).value) + change);
+    
+    fetch(`/livres/panier/modifier/${itemId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        body: JSON.stringify({
+            quantity: newQuantity
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Erreur lors de la mise à jour: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Erreur lors de la mise à jour');
+    });
+}
+
+function removeItem(itemId) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet article du panier ?')) {
+        fetch(`/livres/panier/supprimer/${itemId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erreur lors de la suppression: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de la suppression');
+        });
+    }
+}
+</script>
+{% endblock %}

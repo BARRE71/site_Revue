@@ -1,0 +1,592 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ revue.title }} - {{ site_name|default:"Revue Délibérée" }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .revue-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 40px 0;
+        margin-bottom: 40px;
+    }
+    
+    .revue-number-badge {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+    
+    .revue-title-main {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #212529;
+        line-height: 1.2;
+        margin-bottom: 15px;
+    }
+    
+    .revue-subtitle-main {
+        font-size: 1.3rem;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+    
+    .revue-cover-large {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .purchase-box {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        padding: 25px;
+        position: sticky;
+        top: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .price-display {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #28a745;
+        margin-bottom: 20px;
+    }
+    
+    .format-selector {
+        margin-bottom: 20px;
+    }
+    
+    .format-option {
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .format-option:hover {
+        border-color: #007bff;
+        background-color: #f8f9fa;
+    }
+    
+    .format-option.selected {
+        border-color: #007bff;
+        background-color: #e7f3ff;
+    }
+    
+    .format-option input[type="radio"] {
+        margin-right: 10px;
+    }
+    
+    .stock-status {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+    
+    .stock-available {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .stock-out {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .quantity-selector {
+        margin-bottom: 20px;
+    }
+    
+    .add-to-cart-btn {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    
+    .revue-info-section {
+        margin-bottom: 40px;
+    }
+    
+    .revue-info-section h3 {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    .metadata-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .metadata-item {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+    
+    .metadata-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 5px;
+    }
+    
+    .metadata-value {
+        color: #212529;
+    }
+    
+    .articles-list {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .article-item {
+        padding: 20px;
+        border-bottom: 1px solid #e9ecef;
+        transition: background-color 0.2s;
+    }
+    
+    .article-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .article-item:last-child {
+        border-bottom: none;
+    }
+    
+    .article-title {
+        font-weight: 600;
+        color: #212529;
+        margin-bottom: 8px;
+    }
+    
+    .article-author {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+    
+    .article-abstract {
+        color: #495057;
+        line-height: 1.6;
+    }
+    
+    .similar-revues {
+        background: #f8f9fa;
+        padding: 40px 0;
+        margin-top: 40px;
+    }
+    
+    .similar-revue-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+        height: 100%;
+    }
+    
+    .similar-revue-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .breadcrumb-custom {
+        background: transparent;
+        padding: 0;
+        margin-bottom: 20px;
+    }
+    
+    .breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+        content: ">";
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumbs -->
+<nav aria-label="breadcrumb" class="container mt-3">
+    <ol class="breadcrumb breadcrumb-custom">
+        <li class="breadcrumb-item">
+            <a href="{% url 'core:home' %}" class="text-decoration-none">Accueil</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'livres:revue_list' %}" class="text-decoration-none">Catalogue</a>
+        </li>
+        {% if revue.category %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'livres:category_revues' category_slug=revue.category.slug %}" class="text-decoration-none">
+                    {{ revue.category.name }}
+                </a>
+            </li>
+        {% endif %}
+        <li class="breadcrumb-item active" aria-current="page">{{ revue.title }}</li>
+    </ol>
+</nav>
+
+<!-- En-tête de la revue -->
+<div class="revue-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="revue-number-badge">
+                    Délibérée N°{{ revue.numero }}
+                </div>
+                <h1 class="revue-title-main">{{ revue.title }}</h1>
+                {% if revue.subtitle %}
+                    <div class="revue-subtitle-main">{{ revue.subtitle }}</div>
+                {% endif %}
+                <p class="lead mb-0">{{ revue.description|truncatewords:30 }}</p>
+            </div>
+            <div class="col-lg-4 text-center">
+                {% if revue.cover_image %}
+                    <img src="{{ revue.cover_image.url }}" alt="{{ revue.title }}" class="revue-cover-large">
+                {% else %}
+                    <div class="revue-cover-large bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                        <i class="fas fa-book fa-6x text-muted"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Contenu principal -->
+        <div class="col-lg-8">
+            <!-- Description -->
+            <div class="revue-info-section">
+                <h3>
+                    <i class="fas fa-info-circle me-2"></i>Description
+                </h3>
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="lead">{{ revue.description }}</p>
+                        {% if revue.excerpt %}
+                            <p>{{ revue.excerpt }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <!-- Métadonnées -->
+                        <div class="metadata-grid">
+                            <div class="metadata-item">
+                                <div class="metadata-label">Langue</div>
+                                <div class="metadata-value">
+                                    {% if revue.language == 'fr' %}Français
+                                    {% elif revue.language == 'ar' %}Arabe
+                                    {% elif revue.language == 'en' %}Anglais
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="metadata-item">
+                                <div class="metadata-label">Pages</div>
+                                <div class="metadata-value">{{ revue.pages_count }}</div>
+                            </div>
+                            {% if revue.dimensions %}
+                                <div class="metadata-item">
+                                    <div class="metadata-label">Dimensions</div>
+                                    <div class="metadata-value">{{ revue.dimensions }}</div>
+                                </div>
+                            {% endif %}
+                            {% if revue.isbn %}
+                                <div class="metadata-item">
+                                    <div class="metadata-label">ISBN</div>
+                                    <div class="metadata-value">{{ revue.isbn }}</div>
+                                </div>
+                            {% endif %}
+                            {% if revue.issn %}
+                                <div class="metadata-item">
+                                    <div class="metadata-label">ISSN</div>
+                                    <div class="metadata-value">{{ revue.issn }}</div>
+                                </div>
+                            {% endif %}
+                            <div class="metadata-item">
+                                <div class="metadata-label">Date de publication</div>
+                                <div class="metadata-value">{{ revue.publication_date|date:"d/m/Y" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Éditorial -->
+            {% if revue.editorial %}
+                <div class="revue-info-section">
+                    <h3>
+                        <i class="fas fa-edit me-2"></i>Éditorial
+                    </h3>
+                    <p>{{ revue.editorial }}</p>
+                </div>
+            {% endif %}
+            
+            <!-- Articles -->
+            {% if articles %}
+                <div class="revue-info-section">
+                    <h3>
+                        <i class="fas fa-newspaper me-2"></i>Sommaire
+                    </h3>
+                    <div class="articles-list">
+                        {% for article in articles %}
+                            <div class="article-item">
+                                <div class="article-title">
+                                    {{ article.title }}
+                                    <span class="badge bg-secondary ms-2">
+                                        Pages {{ article.page_start }}-{{ article.page_end }}
+                                    </span>
+                                </div>
+                                <div class="article-author">
+                                    <i class="fas fa-user me-1"></i>
+                                    <a href="{% url 'livres:author_detail' slug=article.author.slug %}" class="text-decoration-none">
+                                        {{ article.author.name }}
+                                    </a>
+                                    {% if article.author.academic_title %}
+                                        <span class="text-muted">({{ article.author.academic_title }})</span>
+                                    {% endif %}
+                                </div>
+                                <div class="article-abstract">{{ article.abstract }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Tags -->
+            {% if revue.tags.all %}
+                <div class="revue-info-section">
+                    <h3>
+                        <i class="fas fa-tags me-2"></i>Thèmes
+                    </h3>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for tag in revue.tags.all %}
+                            <span class="badge bg-primary">{{ tag.name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Bloc d'achat -->
+        <div class="col-lg-4">
+            <div class="purchase-box">
+                <h4 class="mb-4">
+                    <i class="fas fa-shopping-cart me-2"></i>Acheter cette revue
+                </h4>
+                
+                <!-- Prix -->
+                <div class="price-display">
+                    {% if revue.is_available_paper %}
+                        {{ revue.price_paper }} €
+                    {% elif revue.is_available_pdf %}
+                        {{ revue.price_pdf }} €
+                    {% endif %}
+                </div>
+                
+                <!-- Sélecteur de format -->
+                <div class="format-selector">
+                    <h6 class="mb-3">Choisir le format :</h6>
+                    
+                    {% if revue.is_available_paper %}
+                        <div class="format-option" onclick="selectFormat('papier')">
+                            <input type="radio" name="format" value="papier" id="format-papier" checked>
+                            <label for="format-papier">
+                                <strong>Format papier</strong><br>
+                                <small class="text-muted">{{ revue.price_paper }} €</small>
+                            </label>
+                        </div>
+                    {% endif %}
+                    
+                    {% if revue.is_available_pdf %}
+                        <div class="format-option" onclick="selectFormat('pdf')">
+                            <input type="radio" name="format" value="pdf" id="format-pdf" {% if not revue.is_available_paper %}checked{% endif %}>
+                            <label for="format-pdf">
+                                <strong>Format PDF</strong><br>
+                                <small class="text-muted">{{ revue.price_pdf }} €</small>
+                            </label>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Statut du stock -->
+                <div class="stock-status {% if revue.is_available_paper %}stock-available{% else %}stock-out{% endif %}">
+                    {% if revue.is_available_paper %}
+                        <i class="fas fa-check-circle me-2"></i>En stock
+                    {% else %}
+                        <i class="fas fa-times-circle me-2"></i>Épuisé
+                    {% endif %}
+                </div>
+                
+                <!-- Sélecteur de quantité -->
+                <div class="quantity-selector">
+                    <label for="quantity" class="form-label">Quantité :</label>
+                    <select id="quantity" class="form-select">
+                        {% for i in "12345678910" %}
+                            <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <!-- Bouton d'ajout au panier -->
+                <button class="btn btn-success add-to-cart-btn" onclick="addToCart()">
+                    <i class="fas fa-cart-plus me-2"></i>Ajouter au panier
+                </button>
+                
+                <!-- Bouton de téléchargement PDF (pour les abonnés) -->
+                {% if revue.pdf_file %}
+                    {% if has_active_subscription %}
+                        <a href="{% url 'livres:download_revue_pdf' revue.slug %}" class="btn btn-primary mt-2">
+                            <i class="fas fa-download me-2"></i>Télécharger PDF
+                        </a>
+                    {% else %}
+                        <div class="mt-3 p-3 bg-warning bg-opacity-10 border border-warning rounded">
+                            <h6 class="text-warning mb-2">
+                                <i class="fas fa-lock me-2"></i>Accès abonné requis
+                            </h6>
+                            <p class="mb-2 small">Pour télécharger le PDF complet de cette revue, vous devez avoir un abonnement actif.</p>
+                            <a href="{% url 'subscriptions:plan_list' %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-crown me-1"></i>Voir les abonnements
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                
+                <!-- Informations supplémentaires -->
+                <div class="text-muted small">
+                    <p class="mb-2">
+                        <i class="fas fa-shipping-fast me-1"></i>
+                        Livraison gratuite à partir de 50€
+                    </p>
+                    <p class="mb-2">
+                        <i class="fas fa-undo me-1"></i>
+                        Retours gratuits sous 30 jours
+                    </p>
+                    <p class="mb-0">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        Paiement sécurisé
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Revues similaires -->
+{% if similar_revues %}
+    <div class="similar-revues">
+        <div class="container">
+            <h3 class="text-center mb-4">
+                <i class="fas fa-thumbs-up me-2"></i>Revues similaires
+            </h3>
+            <div class="row g-4">
+                {% for similar_revue in similar_revues %}
+                    <div class="col-md-6 col-lg-3">
+                        <div class="similar-revue-card">
+                            {% if similar_revue.cover_image %}
+                                <img src="{{ similar_revue.cover_image.url }}" alt="{{ similar_revue.title }}" class="w-100" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="w-100 bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="fas fa-book fa-3x text-muted"></i>
+                                </div>
+                            {% endif %}
+                            <div class="p-3">
+                                <div class="badge bg-primary mb-2">N°{{ similar_revue.numero }}</div>
+                                <h6 class="mb-2">
+                                    <a href="{% url 'livres:revue_detail' slug=similar_revue.slug %}" class="text-decoration-none">
+                                        {{ similar_revue.title|truncatewords:8 }}
+                                    </a>
+                                </h6>
+                                <div class="text-success fw-bold">{{ similar_revue.main_price }} €</div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+function selectFormat(format) {
+    // Mettre à jour la sélection radio
+    document.querySelector(`input[value="${format}"]`).checked = true;
+    
+    // Mettre à jour l'affichage des options
+    document.querySelectorAll('.format-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+    event.currentTarget.classList.add('selected');
+    
+    // Mettre à jour le prix affiché
+    updatePrice(format);
+}
+
+function updatePrice(format) {
+    const priceDisplay = document.querySelector('.price-display');
+    if (format === 'papier') {
+        priceDisplay.textContent = '{{ revue.price_paper }} €';
+    } else {
+        priceDisplay.textContent = '{{ revue.price_pdf }} €';
+    }
+}
+
+function addToCart() {
+    const format = document.querySelector('input[name="format"]:checked').value;
+    const quantity = document.getElementById('quantity').value;
+    
+    // Créer le formulaire et l'envoyer
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{% url "livres:add_to_cart" revue_id=revue.id %}';
+    
+    const formatInput = document.createElement('input');
+    formatInput.type = 'hidden';
+    formatInput.name = 'format';
+    formatInput.value = format;
+    
+    const quantityInput = document.createElement('input');
+    quantityInput.type = 'hidden';
+    quantityInput.name = 'quantity';
+    quantityInput.value = quantity;
+    
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = 'csrfmiddlewaretoken';
+    csrfInput.value = '{{ csrf_token }}';
+    
+    form.appendChild(csrfInput);
+    form.appendChild(formatInput);
+    form.appendChild(quantityInput);
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// Initialiser la sélection de format
+document.addEventListener('DOMContentLoaded', function() {
+    const selectedFormat = document.querySelector('input[name="format"]:checked').value;
+    const formatOption = document.querySelector(`input[value="${selectedFormat}"]`).closest('.format-option');
+    formatOption.classList.add('selected');
+});
+</script>
+{% endblock %}

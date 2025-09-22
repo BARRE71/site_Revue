@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Historique des abonnements - RevueMaroc{% endblock %}
+
+{% block extra_css %}
+<style>
+.history-container {
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.history-header {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.history-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.history-item {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e9ecef;
+    transition: background-color 0.3s ease;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-item:hover {
+    background-color: #f8f9fa;
+}
+
+.plan-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.plan-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.plan-price {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #28a745;
+}
+
+.plan-dates {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.date-item {
+    text-align: center;
+}
+
+.date-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.date-value {
+    font-size: 0.9rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-expired {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-cancelled {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-suspended {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.btn-action {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+    color: white;
+    text-decoration: none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Navigation fil d'Ariane -->
+<nav class="breadcrumb-nav" style="background: #f8f9fa; padding: 1rem 0; margin-bottom: 0;">
+    <div class="container">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'core:home' %}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>Accueil
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'subscriptions:my_subscription' %}" class="text-decoration-none">
+                    Mon abonnement
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Historique
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête -->
+<section class="history-header">
+    <div class="container text-center">
+        <h1><i class="fas fa-history me-3"></i>Historique des abonnements</h1>
+        <p class="lead">Consultez l'historique de tous vos abonnements RevueMaroc</p>
+    </div>
+</section>
+
+<!-- Contenu principal -->
+<section class="history-container">
+    <div class="container">
+        {% if subscriptions %}
+        <div class="history-card">
+            {% for subscription in subscriptions %}
+            <div class="history-item">
+                <div class="plan-info">
+                    <div>
+                        <div class="plan-name">{{ subscription.plan.name }}</div>
+                        <div class="text-muted">{{ subscription.plan.get_plan_type_display }}</div>
+                    </div>
+                    <div class="plan-price">{{ subscription.plan.price }}€</div>
+                </div>
+                
+                <div class="plan-dates">
+                    <div class="date-item">
+                        <div class="date-label">Début</div>
+                        <div class="date-value">{{ subscription.start_date|date:"d/m/Y" }}</div>
+                    </div>
+                    <div class="date-item">
+                        <div class="date-label">Fin</div>
+                        <div class="date-value">{{ subscription.end_date|date:"d/m/Y" }}</div>
+                    </div>
+                    <div class="date-item">
+                        <div class="date-label">Créé le</div>
+                        <div class="date-value">{{ subscription.created_at|date:"d/m/Y" }}</div>
+                    </div>
+                </div>
+                
+                <div class="status-badge status-{{ subscription.status }}">
+                    {% if subscription.status == 'active' %}
+                        <i class="fas fa-check-circle me-1"></i>Actif
+                    {% elif subscription.status == 'expired' %}
+                        <i class="fas fa-clock me-1"></i>Expiré
+                    {% elif subscription.status == 'cancelled' %}
+                        <i class="fas fa-times-circle me-1"></i>Annulé
+                    {% elif subscription.status == 'suspended' %}
+                        <i class="fas fa-pause-circle me-1"></i>Suspendu
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% else %}
+        <!-- Aucun historique -->
+        <div class="history-card">
+            <div class="empty-state">
+                <i class="fas fa-history"></i>
+                <h3>Aucun historique d'abonnement</h3>
+                <p class="mb-4">
+                    Vous n'avez pas encore d'abonnement RevueMaroc. 
+                    Découvrez nos plans et accédez à tout notre contenu premium.
+                </p>
+                <a href="{% url 'subscriptions:plan_list' %}" class="btn-action btn-primary">
+                    <i class="fas fa-rocket me-2"></i>Voir les plans d'abonnement
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Actions -->
+        <div class="text-center">
+            <a href="{% url 'subscriptions:my_subscription' %}" class="btn-action btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Retour à mon abonnement
+            </a>
+            <a href="{% url 'subscriptions:plan_list' %}" class="btn-action btn-primary">
+                <i class="fas fa-crown me-2"></i>Voir les plans
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

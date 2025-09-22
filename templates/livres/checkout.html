@@ -1,0 +1,403 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Finaliser la commande - RevueMaroc{% endblock %}
+
+{% block extra_css %}
+<style>
+.checkout-container {
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.checkout-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.checkout-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.checkout-content {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.checkout-section {
+    padding: 2rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.checkout-section:last-child {
+    border-bottom: none;
+}
+
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.section-title i {
+    margin-right: 0.75rem;
+    color: #667eea;
+}
+
+.order-summary {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.item-meta {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.item-price {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.total-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-top: 1rem;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.total-row.final {
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-top: 1px solid rgba(255,255,255,0.3);
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-checkout {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-checkout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    color: white;
+}
+
+.payment-methods {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.payment-method {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.payment-method:hover {
+    border-color: #667eea;
+}
+
+.payment-method.selected {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.payment-method input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+.breadcrumb-nav {
+    background: #f8f9fa;
+    padding: 1rem 0;
+    margin-bottom: 0;
+}
+
+.breadcrumb-nav .breadcrumb-item + .breadcrumb-item::before {
+    content: ">";
+    color: #6c757d;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Navigation fil d'Ariane -->
+<nav class="breadcrumb-nav">
+    <div class="container">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'core:home' %}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>Accueil
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'livres:cart_detail' %}" class="text-decoration-none">
+                    <i class="fas fa-shopping-cart me-1"></i>Panier
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Finaliser la commande
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête du checkout -->
+<section class="checkout-header">
+    <div class="container text-center">
+        <h1>Finaliser votre commande</h1>
+        <p class="lead">Récapitulatif et informations de livraison</p>
+    </div>
+</section>
+
+<!-- Contenu du checkout -->
+<section class="checkout-container">
+    <div class="container">
+        <div class="row">
+            <!-- Formulaire de commande -->
+            <div class="col-lg-8">
+                <div class="checkout-content">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Informations de livraison -->
+                        <div class="checkout-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-shipping-fast"></i>
+                                Adresse de livraison
+                            </h2>
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Adresse complète *</label>
+                                        <textarea name="shipping_address" class="form-control" rows="3" required 
+                                                  placeholder="Numéro, rue, appartement..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Ville *</label>
+                                        <input type="text" name="shipping_city" class="form-control" required 
+                                               placeholder="Votre ville">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Code postal *</label>
+                                        <input type="text" name="shipping_postal_code" class="form-control" required 
+                                               placeholder="Code postal">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Pays *</label>
+                                <select name="shipping_country" class="form-control" required>
+                                    <option value="">Sélectionnez votre pays</option>
+                                    <option value="MA">Maroc</option>
+                                    <option value="FR">France</option>
+                                    <option value="BE">Belgique</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="CH">Suisse</option>
+                                    <option value="LU">Luxembourg</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Méthode de paiement -->
+                        <div class="checkout-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-credit-card"></i>
+                                Méthode de paiement
+                            </h2>
+                            
+                            <div class="payment-methods">
+                                <div class="payment-method">
+                                    <input type="radio" name="payment_method" value="stripe" id="stripe" required>
+                                    <label for="stripe">
+                                        <i class="fab fa-cc-stripe fa-2x text-primary mb-2"></i>
+                                        <br>Carte bancaire
+                                    </label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="radio" name="payment_method" value="paypal" id="paypal">
+                                    <label for="paypal">
+                                        <i class="fab fa-paypal fa-2x text-primary mb-2"></i>
+                                        <br>PayPal
+                                    </label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="radio" name="payment_method" value="bank_transfer" id="bank_transfer">
+                                    <label for="bank_transfer">
+                                        <i class="fas fa-university fa-2x text-primary mb-2"></i>
+                                        <br>Virement bancaire
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Bouton de validation -->
+                        <div class="checkout-section">
+                            <button type="submit" class="btn btn-checkout">
+                                <i class="fas fa-lock me-2"></i>
+                                Confirmer la commande
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Résumé de la commande -->
+            <div class="col-lg-4">
+                <div class="checkout-content">
+                    <div class="checkout-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-receipt"></i>
+                            Résumé de la commande
+                        </h2>
+                        
+                        <div class="order-summary">
+                            {% for item in cart_items %}
+                            <div class="order-item">
+                                <div class="item-details">
+                                    <div class="item-title">{{ item.revue.title }}</div>
+                                    <div class="item-meta">
+                                        Format: {{ item.get_format_display }} | Quantité: {{ item.quantity }}
+                                    </div>
+                                </div>
+                                <div class="item-price">{{ item.total_price }} €</div>
+                            </div>
+                            {% endfor %}
+                            
+                            <div class="total-section">
+                                <div class="total-row">
+                                    <span>Sous-total</span>
+                                    <span>{{ cart_total }} €</span>
+                                </div>
+                                <div class="total-row">
+                                    <span>Frais de livraison</span>
+                                    <span>{{ shipping_cost }} €</span>
+                                </div>
+                                <div class="total-row final">
+                                    <span>Total</span>
+                                    <span>{{ total_with_shipping }} €</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Gestion de la sélection des méthodes de paiement
+document.querySelectorAll('.payment-method').forEach(method => {
+    method.addEventListener('click', function() {
+        // Désélectionner toutes les méthodes
+        document.querySelectorAll('.payment-method').forEach(m => {
+            m.classList.remove('selected');
+        });
+        
+        // Sélectionner la méthode cliquée
+        this.classList.add('selected');
+        
+        // Cocher le radio button
+        const radio = this.querySelector('input[type="radio"]');
+        radio.checked = true;
+    });
+});
+
+// Validation du formulaire
+document.querySelector('form').addEventListener('submit', function(e) {
+    const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+    
+    if (!paymentMethod) {
+        e.preventDefault();
+        alert('Veuillez sélectionner une méthode de paiement.');
+        return false;
+    }
+});
+</script>
+{% endblock %}

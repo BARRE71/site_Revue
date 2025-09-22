@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mes commandes - RevueMaroc{% endblock %}
+
+{% block extra_css %}
+<style>
+.orders-container {
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.orders-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.orders-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.order-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.order-header {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.order-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.order-number {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.order-date {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.order-status {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.status-pending { background: #fff3cd; color: #856404; }
+.status-confirmed { background: #d1ecf1; color: #0c5460; }
+.status-processing { background: #d4edda; color: #155724; }
+.status-shipped { background: #cce5ff; color: #004085; }
+.status-delivered { background: #d4edda; color: #155724; }
+.status-cancelled { background: #f8d7da; color: #721c24; }
+
+.order-content {
+    padding: 1.5rem;
+}
+
+.order-items {
+    margin-bottom: 1.5rem;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.item-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.item-meta {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.item-price {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.order-total {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.order-actions {
+    padding: 1.5rem;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-action {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    color: white;
+}
+
+.btn-outline-primary {
+    border: 2px solid #667eea;
+    color: #667eea;
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: #667eea;
+    color: white;
+}
+
+.empty-orders {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.empty-orders i {
+    font-size: 4rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.breadcrumb-nav {
+    background: #f8f9fa;
+    padding: 1rem 0;
+    margin-bottom: 0;
+}
+
+.breadcrumb-nav .breadcrumb-item + .breadcrumb-item::before {
+    content: ">";
+    color: #6c757d;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Navigation fil d'Ariane -->
+<nav class="breadcrumb-nav">
+    <div class="container">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'core:home' %}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>Accueil
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Mes commandes
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête des commandes -->
+<section class="orders-header">
+    <div class="container text-center">
+        <h1>Mes commandes</h1>
+        <p class="lead">Historique et suivi de vos commandes</p>
+    </div>
+</section>
+
+<!-- Liste des commandes -->
+<section class="orders-container">
+    <div class="container">
+        {% if orders %}
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-info">
+                        <div>
+                            <div class="order-number">{{ order.order_number }}</div>
+                            <div class="order-date">{{ order.created_at|date:"d/m/Y H:i" }}</div>
+                        </div>
+                        <span class="order-status status-{{ order.status }}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="order-content">
+                    <div class="order-items">
+                        {% for item in order.items.all %}
+                        <div class="order-item">
+                            <div class="item-details">
+                                <div class="item-title">{{ item.revue.title }}</div>
+                                <div class="item-meta">
+                                    Format: {{ item.get_format_display }} | Quantité: {{ item.quantity }}
+                                </div>
+                            </div>
+                            <div class="item-price">{{ item.total_price }} €</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="order-total">
+                        <span>Total de la commande</span>
+                        <span>{{ order.total_amount }} €</span>
+                    </div>
+                </div>
+                
+                <div class="order-actions">
+                    <a href="{% url 'livres:order_detail' order.id %}" class="btn btn-outline-primary btn-action">
+                        <i class="fas fa-eye me-2"></i>Voir les détails
+                    </a>
+                    
+                    {% if order.status == 'pending' %}
+                    <a href="#" class="btn btn-primary btn-action">
+                        <i class="fas fa-credit-card me-2"></i>Payer maintenant
+                    </a>
+                    {% endif %}
+                    
+                    {% if order.status == 'shipped' and order.tracking_number %}
+                    <a href="#" class="btn btn-primary btn-action">
+                        <i class="fas fa-truck me-2"></i>Suivre le colis
+                    </a>
+                    {% endif %}
+                    
+                    {% if order.status == 'delivered' %}
+                    <a href="#" class="btn btn-outline-primary btn-action">
+                        <i class="fas fa-star me-2"></i>Évaluer
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-orders">
+                <i class="fas fa-shopping-bag"></i>
+                <h3 class="text-muted">Aucune commande pour le moment</h3>
+                <p class="text-muted">Vous n'avez pas encore passé de commande.</p>
+                <a href="{% url 'livres:revue_list' %}" class="btn btn-primary">
+                    <i class="fas fa-book me-2"></i>Découvrir nos revues
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

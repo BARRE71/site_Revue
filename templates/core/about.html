@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}À propos - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Section Héro -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 text-primary mb-4">
+                <i class="fas fa-book-open me-3"></i>
+                À propos de RevueMaroc
+            </h1>
+            <p class="lead">
+                Votre source d'information privilégiée sur le développement du Maroc, 
+                offrant des analyses approfondies, des reportages exclusifs et une 
+                perspective unique sur l'évolution de notre nation.
+            </p>
+        </div>
+    </div>
+
+    <!-- Section Mission -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-primary mb-4">
+                        <i class="fas fa-bullseye me-2"></i>
+                        Notre Mission
+                    </h2>
+                    <p class="fs-5">
+                        RevueMaroc s'engage à fournir une couverture journalistique de qualité, 
+                        en mettant l'accent sur les développements politiques, économiques, 
+                        sociaux et culturels qui façonnent l'avenir du Maroc.
+                    </p>
+                    <p class="fs-5">
+                        Nous croyons en la puissance de l'information pour éclairer, 
+                        éduquer et inspirer nos lecteurs, contribuant ainsi au progrès 
+                        et à la prospérité de notre société.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Valeurs -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="text-center text-primary mb-5">
+                <i class="fas fa-star me-2"></i>
+                Nos Valeurs
+            </h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fas fa-shield-alt fa-2x"></i>
+                            </div>
+                            <h5 class="card-title">Intégrité</h5>
+                            <p class="card-text">
+                                Nous maintenons les plus hauts standards d'éthique 
+                                journalistique et d'objectivité.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fas fa-lightbulb fa-2x"></i>
+                            </div>
+                            <h5 class="card-title">Innovation</h5>
+                            <p class="card-text">
+                                Nous adoptons les nouvelles technologies pour 
+                                améliorer l'expérience de nos lecteurs.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fas fa-users fa-2x"></i>
+                            </div>
+                            <h5 class="card-title">Communauté</h5>
+                            <p class="card-text">
+                                Nous favorisons le dialogue et l'engagement 
+                                avec notre communauté de lecteurs.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Équipe -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="text-center text-primary mb-5">
+                <i class="fas fa-users me-2"></i>
+                Notre Équipe
+            </h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                <i class="fas fa-user-tie fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="card-title">Équipe Rédactionnelle</h5>
+                            <p class="card-text">
+                                Des journalistes expérimentés et des experts 
+                                dans leurs domaines respectifs.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                <i class="fas fa-cogs fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="card-title">Équipe Technique</h5>
+                            <p class="card-text">
+                                Des développeurs et designers passionnés 
+                                par l'innovation technologique.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Statistiques -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <div class="card bg-primary text-white">
+                <div class="card-body p-5 text-center">
+                    <h2 class="mb-4">
+                        <i class="fas fa-chart-line me-2"></i>
+                        RevueMaroc en Chiffres
+                    </h2>
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="border-end border-white">
+                                <h3 class="display-6 fw-bold">1000+</h3>
+                                <p class="mb-0">Articles publiés</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border-end border-white">
+                                <h3 class="display-6 fw-bold">50+</h3>
+                                <p class="mb-0">Auteurs contributeurs</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border-end border-white">
+                                <h3 class="display-6 fw-bold">10000+</h3>
+                                <p class="mb-0">Lecteurs fidèles</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 class="display-6 fw-bold">5+</h3>
+                            <p class="mb-0">Années d'expérience</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Contact -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <div class="card border-0 shadow">
+                <div class="card-body p-5">
+                    <h3 class="text-primary mb-3">
+                        <i class="fas fa-handshake me-2"></i>
+                        Travaillons Ensemble
+                    </h3>
+                    <p class="fs-5 mb-4">
+                        Vous souhaitez collaborer avec nous ou avez des questions ? 
+                        N'hésitez pas à nous contacter !
+                    </p>
+                    <a href="{% url 'core:contact' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-envelope me-2"></i>
+                        Nous Contacter
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

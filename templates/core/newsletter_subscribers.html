@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Abonnés Newsletter - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-users me-2"></i>
+                    Abonnés Newsletter
+                </h2>
+                <div class="btn-group">
+                    <a href="{% url 'admin:subscriptions_newslettersubscription_changelist' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-1"></i>
+                        Administration
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Statistiques -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h3 class="mb-0">{{ total_subscribers }}</h3>
+                            <small>Total Abonnés</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <h3 class="mb-0">{{ active_subscribers }}</h3>
+                            <small>Abonnés Actifs</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body text-center">
+                            <h3 class="mb-0">{{ total_subscribers|add:"-"|add:active_subscribers }}</h3>
+                            <small>Désinscrits</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Liste des abonnés -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Liste des Abonnés
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if subscribers %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Statut</th>
+                                        <th>Date d'inscription</th>
+                                        <th>Domaines d'intérêt</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for subscriber in subscribers %}
+                                    <tr>
+                                        <td>
+                                            <i class="fas fa-envelope me-2"></i>
+                                            {{ subscriber.email }}
+                                        </td>
+                                        <td>
+                                            {% if subscriber.is_active %}
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check me-1"></i>
+                                                    Actif
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-danger">
+                                                    <i class="fas fa-times me-1"></i>
+                                                    Inactif
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                {{ subscriber.created_at|date:"d/m/Y H:i" }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            {% if subscriber.domains %}
+                                                <small class="text-muted">{{ subscriber.domains|truncatechars:50 }}</small>
+                                            {% else %}
+                                                <small class="text-muted">-</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                {% if subscriber.is_active %}
+                                                    <a href="{% url 'admin:subscriptions_newslettersubscription_change' subscriber.id %}" 
+                                                       class="btn btn-outline-primary btn-sm">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Aucun abonné trouvé</h5>
+                            <p class="text-muted">Les abonnés à la newsletter apparaîtront ici.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

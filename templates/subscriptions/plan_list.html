@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Plans d'abonnement - RevueMaroc{% endblock %}
+
+{% block extra_css %}
+<style>
+.subscription-container {
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.subscription-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+}
+
+.subscription-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.subscription-header .lead {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.plans-grid {
+    margin-bottom: 3rem;
+}
+
+.plan-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f1f3f4;
+    height: 100%;
+    position: relative;
+}
+
+.plan-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.plan-card.popular {
+    border: 3px solid #ff6b35;
+    transform: scale(1.05);
+}
+
+.plan-card.popular:hover {
+    transform: scale(1.05) translateY(-4px);
+}
+
+.popular-badge {
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    z-index: 10;
+}
+
+.plan-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.plan-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.plan-type {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 1rem;
+}
+
+.plan-price {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.plan-currency {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+.plan-duration {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.plan-content {
+    padding: 2rem;
+}
+
+.plan-description {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.plan-features {
+    margin-bottom: 2rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    color: #2c3e50;
+}
+
+.feature-item i {
+    color: #28a745;
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.plan-actions {
+    text-align: center;
+}
+
+.btn-subscribe {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-subscribe:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    color: white;
+}
+
+.btn-manage {
+    background: #6c757d;
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-manage:hover {
+    background: #5a6268;
+    color: white;
+}
+
+.breadcrumb-nav {
+    background: #f8f9fa;
+    padding: 1rem 0;
+    margin-bottom: 0;
+}
+
+.breadcrumb-nav .breadcrumb-item + .breadcrumb-item::before {
+    content: ">";
+    color: #6c757d;
+}
+
+.active-subscription-info {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.active-subscription-info h3 {
+    margin-bottom: 1rem;
+}
+
+.active-subscription-info .btn {
+    background: rgba(255,255,255,0.2);
+    border: 2px solid white;
+    color: white;
+    margin: 0 0.5rem;
+}
+
+.active-subscription-info .btn:hover {
+    background: white;
+    color: #28a745;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Navigation fil d'Ariane -->
+<nav class="breadcrumb-nav">
+    <div class="container">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'core:home' %}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>Accueil
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Plans d'abonnement
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête des abonnements -->
+<section class="subscription-header">
+    <div class="container text-center">
+        <h1>Plans d'abonnement</h1>
+        <p class="lead">Choisissez le plan qui vous convient le mieux et accédez à tout le contenu de RevueMaroc</p>
+    </div>
+</section>
+
+<!-- Contenu des abonnements -->
+<section class="subscription-container">
+    <div class="container">
+        <!-- Information sur l'abonnement actif -->
+        {% if active_subscription %}
+        <div class="active-subscription-info">
+            <h3><i class="fas fa-check-circle me-2"></i>Vous avez un abonnement actif</h3>
+            <p class="mb-3">
+                <strong>{{ active_subscription.plan.name }}</strong> - 
+                Expire le {{ active_subscription.end_date|date:"d/m/Y" }}
+            </p>
+            <a href="{% url 'subscriptions:my_subscription' %}" class="btn">
+                <i class="fas fa-cog me-2"></i>Gérer mon abonnement
+            </a>
+            <a href="{% url 'subscriptions:subscription_history' %}" class="btn">
+                <i class="fas fa-history me-2"></i>Historique
+            </a>
+        </div>
+        {% endif %}
+        
+        <!-- Grille des plans -->
+        <div class="plans-grid">
+            <div class="row g-4">
+                {% for plan in plans %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="plan-card {% if plan.is_popular %}popular{% endif %}">
+                        {% if plan.is_popular %}
+                        <div class="popular-badge">Populaire</div>
+                        {% endif %}
+                        
+                        <div class="plan-header">
+                            <div class="plan-name">{{ plan.name }}</div>
+                            <div class="plan-type">{{ plan.get_plan_type_display }}</div>
+                            <div class="plan-price">{{ plan.price }}</div>
+                            <div class="plan-currency">€</div>
+                            <div class="plan-duration">/ {{ plan.duration_days }} jours</div>
+                        </div>
+                        
+                        <div class="plan-content">
+                            <div class="plan-description">
+                                {{ plan.description }}
+                            </div>
+                            
+                            <div class="plan-features">
+                                {% for feature in plan.features %}
+                                <div class="feature-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>{{ feature }}</span>
+                                </div>
+                                {% empty %}
+                                <div class="feature-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>Accès à tous les numéros</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>Contenu exclusif</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check"></i>
+                                    <span>Support prioritaire</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="plan-actions">
+                                {% if active_subscription %}
+                                    <a href="{% url 'subscriptions:my_subscription' %}" class="btn-manage">
+                                        <i class="fas fa-cog me-2"></i>Gérer
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'subscriptions:subscribe' plan.id %}" class="btn-subscribe">
+                                        <i class="fas fa-rocket me-2"></i>Souscrire
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <div class="py-5">
+                        <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Aucun plan disponible</h5>
+                        <p class="text-muted">Les plans d'abonnement seront bientôt disponibles !</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Informations supplémentaires -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <div class="bg-white p-4 rounded-3 shadow-sm">
+                    <h4><i class="fas fa-info-circle text-primary me-2"></i>Informations importantes</h4>
+                    <p class="text-muted mb-0">
+                        Tous nos abonnements incluent un accès complet au contenu numérique. 
+                        Les abonnements se renouvellent automatiquement sauf indication contraire. 
+                        Vous pouvez annuler votre abonnement à tout moment.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

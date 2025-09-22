@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mon abonnement - RevueMaroc{% endblock %}
+
+{% block extra_css %}
+<style>
+.subscription-container {
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.subscription-header {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.subscription-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.subscription-header-card {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.plan-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.plan-price {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.subscription-details {
+    padding: 2rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.detail-value {
+    color: #6c757d;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-expired {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.btn-action {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+    color: white;
+    text-decoration: none;
+}
+
+.payment-history {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 2rem;
+}
+
+.payment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.payment-item:last-child {
+    border-bottom: none;
+}
+
+.payment-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-failed {
+    background: #f8d7da;
+    color: #721c24;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Navigation fil d'Ariane -->
+<nav class="breadcrumb-nav" style="background: #f8f9fa; padding: 1rem 0; margin-bottom: 0;">
+    <div class="container">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'core:home' %}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>Accueil
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Mon abonnement
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- En-tête -->
+<section class="subscription-header">
+    <div class="container text-center">
+        <h1><i class="fas fa-user-circle me-3"></i>Mon abonnement</h1>
+        <p class="lead">Gérez votre abonnement RevueMaroc</p>
+    </div>
+</section>
+
+<!-- Contenu principal -->
+<section class="subscription-container">
+    <div class="container">
+        {% if subscription %}
+        <!-- Abonnement actif -->
+        <div class="subscription-card">
+            <div class="subscription-header-card">
+                <div class="plan-name">{{ subscription.plan.name }}</div>
+                <div class="plan-price">{{ subscription.plan.price }}€</div>
+                <div class="plan-duration">{{ subscription.plan.get_plan_type_display }}</div>
+            </div>
+            
+            <div class="subscription-details">
+                <div class="detail-item">
+                    <span class="detail-label">Statut</span>
+                    <span class="status-badge status-active">
+                        <i class="fas fa-check-circle me-1"></i>Actif
+                    </span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-label">Date de début</span>
+                    <span class="detail-value">{{ subscription.start_date|date:"d/m/Y" }}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-label">Date d'expiration</span>
+                    <span class="detail-value">{{ subscription.end_date|date:"d/m/Y" }}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-label">Renouvellement automatique</span>
+                    <span class="detail-value">
+                        {% if subscription.auto_renew %}
+                            <i class="fas fa-check text-success"></i> Activé
+                        {% else %}
+                            <i class="fas fa-times text-danger"></i> Désactivé
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-label">Fonctionnalités incluses</span>
+                    <span class="detail-value">
+                        <ul class="list-unstyled mb-0">
+                            {% for feature in subscription.plan.features %}
+                            <li><i class="fas fa-check text-success me-1"></i>{{ feature }}</li>
+                            {% endfor %}
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="text-center mb-4">
+            <a href="{% url 'subscriptions:plan_list' %}" class="btn-action btn-primary">
+                <i class="fas fa-crown me-2"></i>Voir les plans
+            </a>
+            <a href="{% url 'subscriptions:cancel_subscription' subscription.id %}" class="btn-action btn-danger">
+                <i class="fas fa-times me-2"></i>Annuler l'abonnement
+            </a>
+        </div>
+        
+        {% else %}
+        <!-- Aucun abonnement -->
+        <div class="subscription-card">
+            <div class="subscription-details text-center py-5">
+                <i class="fas fa-crown fa-4x text-muted mb-3"></i>
+                <h3 class="text-muted">Aucun abonnement actif</h3>
+                <p class="text-muted mb-4">
+                    Vous n'avez pas d'abonnement actif. Découvrez nos plans et accédez à tout le contenu de RevueMaroc.
+                </p>
+                <a href="{% url 'subscriptions:plan_list' %}" class="btn-action btn-primary">
+                    <i class="fas fa-rocket me-2"></i>Voir les plans d'abonnement
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Historique des paiements -->
+        {% if payment_history %}
+        <div class="payment-history">
+            <h4 class="mb-4">
+                <i class="fas fa-history me-2"></i>Historique des paiements
+            </h4>
+            
+            {% for payment in payment_history %}
+            <div class="payment-item">
+                <div>
+                    <div class="fw-bold">{{ payment.subscription.plan.name }}</div>
+                    <small class="text-muted">{{ payment.transaction_date|date:"d/m/Y H:i" }}</small>
+                </div>
+                <div class="text-end">
+                    <div class="fw-bold">{{ payment.amount }}€</div>
+                    <span class="payment-status status-{{ payment.status }}">
+                        {{ payment.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
